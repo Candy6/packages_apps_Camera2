@@ -295,9 +295,6 @@ public class CameraActivity extends QuickActivity
     /** First run dialog */
     private FirstRunDialog mFirstRunDialog;
 
-    // Keep track of max brightness state
-    public boolean mMaxBrightness;
-
     @Override
     public CameraAppUI getCameraAppUI() {
         return mCameraAppUI;
@@ -571,12 +568,6 @@ public class CameraActivity extends QuickActivity
         mFatalErrorHandler.onCameraReconnectFailure();
     }
 
-    @Override
-    public void onSettingChanged(SettingsManager settingsManager, String key) {
-        if (key.equals(Keys.KEY_MAX_BRIGHTNESS)) {
-            initMaxBrightness();
-        }
-    }
 
     private static class MainHandler extends Handler {
         final WeakReference<CameraActivity> mActivity;
@@ -1513,8 +1504,6 @@ public class CameraActivity extends QuickActivity
         mDevicePlugin = new DevicePluginImpl();
         mDevicePlugin.onCreate(mAppContext);
 
-        initMaxBrightness();
-
         AppUpgrader appUpgrader = new AppUpgrader(this);
         appUpgrader.upgrade(mSettingsManager);
 
@@ -2227,20 +2216,6 @@ public class CameraActivity extends QuickActivity
             mCurrentModule.onLayoutOrientationChanged(
                     mLastLayoutOrientation == Configuration.ORIENTATION_LANDSCAPE);
         }
-    }
-
-    protected void initMaxBrightness() {
-        Window win = getWindow();
-        WindowManager.LayoutParams params = win.getAttributes();
-
-        mMaxBrightness = Keys.isMaxBrightnessOn(mSettingsManager);
-        if (mMaxBrightness) {
-            params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
-        } else {
-            params.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-        }
-
-        win.setAttributes(params);
     }
 
     @Override
